@@ -1,0 +1,376 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NSM SALLE — ما بقى حتى واحد يتدرب بلا ما يخلص</title>
+<meta name="description" content="برنامج تسيير القاعات الرياضية: كل منخرط يمرّر بطاقتو، الخالص يدخل والمنتهي اشتراكو الباب ما يتفتحلوش. جرّب المحاكاة.">
+<meta property="og:title" content="NSM SALLE — لا دخول بلا دفع">
+<meta property="og:description" content="شوف كيفاش منخرط يمرّر بطاقتو: يدخل ولا ما يدخلش.">
+<meta property="og:image" content="assets/shots/03-controle-acces.png">
+<link rel="icon" href="assets/nsm-logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#090a10;--panel:#12141c;--line:#232735;--acc:#3b82ff;--acc2:#a9d4ff;--acc3:#22d3ee;--text:#f2f5fb;--muted:#9aa3b5;--ko:#ff5470}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Cairo','Noto Sans Arabic',Tahoma,sans-serif;line-height:1.7;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:1120px;margin:0 auto;padding:0 20px}
+.glow{position:fixed;inset:0;pointer-events:none;z-index:-1;background:radial-gradient(640px 420px at 88% -5%,rgba(59,130,255,.22),transparent 70%),radial-gradient(520px 420px at 0% 45%,rgba(34,211,238,.10),transparent 70%)}
+nav{display:flex;align-items:center;justify-content:space-between;padding:18px 0}
+.brand{display:flex;align-items:center;gap:12px;font-weight:900;font-size:20px;letter-spacing:1px}
+.brand img{width:44px;height:44px;border-radius:12px}
+.brand i{font-style:normal;color:var(--acc2)}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 22px;border-radius:14px;font-weight:800;font-size:16px;border:1.5px solid var(--line);background:var(--panel);cursor:pointer;color:var(--text);font-family:inherit;transition:.2s}
+.btn:hover{border-color:var(--acc);transform:translateY(-1px)}
+.btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
+.btn.pri{background:linear-gradient(100deg,var(--acc2),var(--acc));color:#06101f;border-color:transparent}
+.btn.sm{padding:8px 14px;font-size:14px;border-radius:10px}
+.hero{padding:34px 0 20px;text-align:center}
+.pill{display:inline-block;padding:6px 16px;border:1.5px solid rgba(59,130,255,.55);border-radius:99px;color:var(--acc2);font-weight:700;font-size:14px;background:rgba(59,130,255,.08)}
+h1{font-weight:900;font-size:clamp(32px,6vw,62px);line-height:1.25;margin:16px 0 10px}
+h1 em{font-style:normal;background:linear-gradient(90deg,var(--acc2),var(--acc3));-webkit-background-clip:text;background-clip:text;color:transparent}
+.lead{max-width:760px;margin:0 auto 22px;color:#ccd2de;font-size:clamp(16px,2.2vw,20px)}
+.cta{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+section{padding:40px 0}
+h2{font-weight:900;font-size:clamp(24px,4vw,36px);margin-bottom:6px}
+.sub{color:var(--muted);margin-bottom:22px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.tile{background:linear-gradient(160deg,#171a23,#10121a);border:1.5px solid var(--line);border-radius:20px;padding:18px}
+.tile .ico{display:grid;place-items:center;width:42px;height:42px;border-radius:12px;background:rgba(59,130,255,.13);border:1.5px solid rgba(59,130,255,.5);color:var(--acc2);font-weight:900;margin-bottom:10px;font-size:18px}
+.tile h3{font-size:18px;font-weight:800;margin-bottom:4px}
+.tile p{color:var(--muted);font-size:15px}
+.ba{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:18px}
+.ba>div{border-radius:22px;padding:22px;border:1.5px solid var(--line)}
+.ba .bad{background:linear-gradient(160deg,#241319,#150c10);border-color:#4a2230}
+.ba .good{background:linear-gradient(160deg,#0e1d33,#0a1220);border-color:#1f4a86}
+.ba h3{font-size:22px;font-weight:900;margin-bottom:10px}
+.ba .bad h3{color:#ff8da0}.ba .good h3{color:var(--acc2)}
+.ba ul{list-style:none;display:grid;gap:8px}
+.ba li{display:flex;gap:10px;color:#d6dbe6}
+.ba .bad li::before{content:"✕";color:var(--ko);font-weight:900}
+.ba .good li::before{content:"✓";color:var(--acc3);font-weight:900}
+
+/* ===== scene ===== */
+.card-box{background:var(--panel);border:1.5px solid var(--line);border-radius:24px;padding:16px}
+.scene{position:relative;direction:ltr;height:320px;border-radius:18px;overflow:hidden;background:linear-gradient(180deg,#141826 0%,#0c0f18 100%);border:1.5px solid #222839}
+.scene .wallsign{position:absolute;top:16px;left:150px;padding:4px 18px;border:1.5px solid rgba(59,130,255,.55);border-radius:10px;color:var(--acc2);font-weight:900;letter-spacing:3px;font-size:13px;background:rgba(59,130,255,.08);font-family:Arial,sans-serif;white-space:nowrap}
+.scene .floor{position:absolute;left:0;right:0;bottom:0;height:62px;background:linear-gradient(180deg,#1b2030,#10131c);border-top:2px solid #2a3147}
+.scene .floor::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent 0 58px,rgba(255,255,255,.04) 58px 60px)}
+.door{position:absolute;right:5%;bottom:62px;width:19%;min-width:92px;height:218px;border:3px solid #2e3650;border-bottom:none;border-radius:10px 10px 0 0;background:#06080d;overflow:hidden}
+.door .inside{position:absolute;inset:0;background:#080b12;display:grid;place-items:center;color:rgba(255,255,255,.12);font-size:44px;transition:background .5s}
+.door.open .inside{background:radial-gradient(circle at 50% 70%,rgba(34,211,238,.55),rgba(59,130,255,.15) 60%,transparent 80%),#0a1426;color:rgba(255,255,255,.5)}
+.door .p{position:absolute;top:0;bottom:0;width:50%;background:linear-gradient(160deg,rgba(120,150,210,.28),rgba(60,80,140,.22));border:1px solid rgba(160,190,255,.35);transition:transform .8s cubic-bezier(.3,.7,.2,1)}
+.door .p.l{left:0}.door .p.r{right:0}
+.door.open .p.l{transform:translateX(-100%)}.door.open .p.r{transform:translateX(100%)}
+.dlight{position:absolute;right:5%;width:19%;min-width:92px;bottom:288px;text-align:center;font-weight:900;font-size:13px;letter-spacing:1px;padding:3px 0;border-radius:8px;background:#1a1e2b;color:#667089;transition:.3s;font-family:Cairo,sans-serif}
+.dlight.ok{background:var(--acc3);color:#031820;box-shadow:0 0 18px rgba(34,211,238,.7)}
+.dlight.ko{background:var(--ko);color:#2a050c;box-shadow:0 0 18px rgba(255,84,112,.7)}
+.post{position:absolute;left:55%;bottom:62px;width:46px;height:128px;border-radius:12px 12px 4px 4px;background:linear-gradient(180deg,#2a3147,#1a1f2e);border:1.5px solid #39425e}
+.post .rdr{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:36px;height:54px;border-radius:9px;background:#0d1018;border:1.5px solid #39425e;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px}
+.post .rdr b{font-size:8px;letter-spacing:1px;color:#7e89a6;font-family:Arial,sans-serif}
+.led{display:inline-block;width:12px;height:12px;border-radius:50%;background:#3b4258;transition:.2s}
+.led.scan{background:#ffc94d;box-shadow:0 0 14px 3px rgba(255,201,77,.7)}
+.led.ok{background:var(--acc3);box-shadow:0 0 14px 3px rgba(34,211,238,.8)}
+.led.ko{background:var(--ko);box-shadow:0 0 14px 3px rgba(255,84,112,.8)}
+.waves{position:absolute;left:50%;top:30px;width:0;height:0;pointer-events:none}
+.waves i{position:absolute;left:-26px;top:-26px;width:52px;height:52px;border-radius:50%;border:2px solid rgba(255,201,77,0)}
+.post.scanning .waves i{animation:wave .9s ease-out infinite}
+.post.scanning .waves i:nth-child(2){animation-delay:.3s}
+@keyframes wave{0%{transform:scale(.4);border-color:rgba(255,201,77,.9)}100%{transform:scale(1.8);border-color:rgba(255,201,77,0)}}
+.person{position:absolute;bottom:60px;left:-90px;width:64px;height:150px;opacity:0;--shirt:#3b82ff;--skin:#e0a77d}
+.person .pv{width:100%;height:100%;overflow:visible}
+.person.flip .pv{transform:scaleX(-1)}
+.person .nm{position:absolute;top:-30px;left:50%;transform:translateX(-50%);white-space:nowrap;font-size:12px;font-weight:800;background:#0d1018;border:1.5px solid #2e3650;border-radius:8px;padding:1px 10px;font-family:Arial,sans-serif}
+.bubble{position:absolute;bottom:206px;left:50%;transform:translateX(-50%) scale(.6);opacity:0;white-space:nowrap;padding:5px 14px;border-radius:12px;font-weight:900;font-size:14px;direction:rtl;transition:.25s;z-index:5;font-family:Cairo,sans-serif}
+.bubble.show{opacity:1;transform:translateX(-50%) scale(1)}
+.bubble.ok{background:var(--acc3);color:#031820}.bubble.ko{background:var(--ko);color:#2a050c}.bubble.nt{background:#ffc94d;color:#2a1c00}
+.bubble::after{content:"";position:absolute;left:50%;bottom:-6px;width:12px;height:12px;background:inherit;transform:translateX(-50%) rotate(45deg)}
+.leg-f,.leg-b,.arm-b,.arm-f{transform-box:view-box}
+.walking .leg-f{animation:lf .55s ease-in-out infinite alternate;transform-origin:30px 84px}
+.walking .leg-b{animation:lb .55s ease-in-out infinite alternate;transform-origin:30px 84px}
+.walking .arm-b{animation:lb .55s ease-in-out infinite alternate;transform-origin:30px 46px}
+.walking .arm-f{animation:lf .55s ease-in-out infinite alternate}
+.walking .pv{animation:bob .275s ease-in-out infinite alternate}
+@keyframes lf{from{transform:rotate(-28deg)}to{transform:rotate(28deg)}}
+@keyframes lb{from{transform:rotate(28deg)}to{transform:rotate(-28deg)}}
+@keyframes bob{from{translate:0 0}to{translate:0 -3px}}
+.arm-f{transform-origin:30px 46px;transition:transform .35s}
+.person.scan .arm-f{transform:rotate(-82deg)}
+.card-in-hand{opacity:0;transition:opacity .2s}
+.person.scan .card-in-hand{opacity:1}
+.head{transform-origin:30px 36px;transform-box:view-box}
+.person.shake .head{animation:shk .25s linear 4}
+@keyframes shk{0%,100%{transform:rotate(0)}25%{transform:rotate(-14deg)}75%{transform:rotate(14deg)}}
+.counter{position:absolute;left:14px;bottom:16px;z-index:6;font-size:13px;color:#8d97b0;background:#0d1018;border:1.5px solid #232839;border-radius:10px;padding:2px 12px;direction:rtl;font-family:Cairo,sans-serif}
+.counter b{color:var(--acc3);font-size:16px}
+
+.sim2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
+.who h5,.log h5{font-size:14px;color:#8d97b0;font-weight:700;margin-bottom:8px}
+.clients{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.cl{display:flex;align-items:center;gap:10px;text-align:right;padding:8px 10px;border-radius:14px;border:1.5px solid var(--line);background:#161923;color:var(--text);font-family:inherit;cursor:pointer;transition:.2s}
+.cl:hover:not(:disabled){border-color:var(--acc);background:#1a2030}
+.cl:disabled{opacity:.5;cursor:not-allowed}
+.cl .av{width:34px;height:34px;border-radius:50%;flex:none;display:grid;place-items:center;font-size:16px;background:var(--c);box-shadow:inset 0 -6px 0 rgba(0,0,0,.18)}
+.cl .t{display:flex;flex-direction:column;line-height:1.3;min-width:0}
+.cl .t b{font-size:13px;font-family:Arial,sans-serif;direction:ltr;text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cl .t span{font-size:12px;color:var(--muted);font-weight:600}
+.kbd{margin-top:12px;background:#0b0d14;border:1.5px solid #222839;border-radius:14px;padding:10px 14px;font-family:'Courier New',monospace;direction:ltr;min-height:46px;display:flex;align-items:center;gap:8px;color:var(--acc2);font-size:17px;letter-spacing:2px}
+.kbd small{font-family:'Cairo',sans-serif;color:#79839c;letter-spacing:0;font-size:12px;direction:rtl;margin-inline-start:auto;white-space:nowrap}
+.kbd .enter{background:#262c3f;color:#fff;border-radius:6px;padding:0 8px;font-size:14px}
+.caret{display:inline-block;width:9px;height:19px;background:var(--acc);animation:blink 1s steps(2) infinite}
+@keyframes blink{50%{opacity:0}}
+.payrow{margin-top:12px;display:none;gap:10px;align-items:center;flex-wrap:wrap;padding:12px;border-radius:14px;border:1.5px dashed rgba(255,84,112,.6);background:rgba(255,84,112,.07)}
+.payrow.show{display:flex}
+.payrow span{flex:1;min-width:180px;font-weight:700;color:#ffb3c0;font-size:15px}
+.tools{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap}
+.win{background:#1b1d23;border:1px solid #2a2d36;border-radius:16px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.win-bar{display:flex;align-items:center;gap:7px;padding:10px 14px;background:#13151a;border-bottom:1px solid #2a2d36;font-size:13px;color:var(--muted)}
+.win-bar span{width:10px;height:10px;border-radius:50%;background:#3a3e48}
+.win-bar b{margin-right:auto;font-weight:600;direction:ltr}
+.win-body{padding:16px}
+.win h4{font-size:19px;font-weight:800;text-align:center}
+.win .hint{text-align:center;color:#7d8490;font-size:13px;margin-bottom:10px}
+.result{min-height:176px;border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:14px;background:#20232b;border:1.5px dashed #343845;transition:background .25s,border-color .25s}
+.result .ic{font-size:38px;line-height:1;margin-bottom:4px;color:#6d7380}
+.result .t{font-size:24px;font-weight:900;color:#8a909c}
+.result .n{font-size:21px;font-weight:800;font-family:Arial,sans-serif;margin-top:4px;direction:ltr}
+.result .d{color:#aab0bb;font-size:14px;margin-top:4px}
+.result .s{margin-top:6px;font-size:16px;font-weight:800}
+.result.ok{background:#0e2230;border:1.5px solid #1d6f86}.result.ok .ic,.result.ok .t,.result.ok .s,.result.ok .n{color:#6ee7f7}
+.result.ko{background:#2a1419;border:1.5px solid #7a2c3b}.result.ko .ic,.result.ko .t,.result.ko .s,.result.ko .n{color:#ff8da0}
+.result.pop{animation:pop .35s ease}
+@keyframes pop{0%{transform:scale(.96)}60%{transform:scale(1.02)}100%{transform:scale(1)}}
+.log{margin-top:12px;font-size:14px}
+.row{display:flex;justify-content:space-between;align-items:center;padding:6px 10px;border-radius:10px;background:#20232b;margin-bottom:5px}
+.row .nm{font-family:Arial,sans-serif;direction:ltr;font-size:13px}
+.row .tm{color:#7d8490;font-size:12px;margin:0 10px;direction:ltr}
+.tag-ok,.tag-ko{padding:2px 12px;border-radius:99px;font-size:12px;font-weight:800}
+.tag-ok{background:#d9f6fb;color:#0b5f70}.tag-ko{background:#fbe3e8;color:#a02a40}
+.note{color:var(--muted);font-size:14px;margin-top:12px}
+
+.gal{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+.gal figure{background:var(--panel);border:1.5px solid var(--line);border-radius:18px;overflow:hidden;cursor:zoom-in;transition:.2s}
+.gal figure:hover{border-color:var(--acc);transform:translateY(-2px)}
+.gal img{display:block;width:100%;aspect-ratio:16/9;object-fit:cover;object-position:top}
+.gal figcaption{padding:10px 14px;font-weight:700;font-size:15px}
+dialog{border:none;background:transparent;max-width:96vw;max-height:94vh;padding:0;margin:auto}
+dialog::backdrop{background:rgba(3,5,10,.88)}
+dialog img{display:block;max-width:96vw;max-height:88vh;border-radius:14px;border:1.5px solid #2a3147}
+dialog .x{position:fixed;top:14px;left:14px}
+.band{background:linear-gradient(100deg,var(--acc2),var(--acc));color:#06101f;border-radius:26px;padding:26px 30px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.band .p{font-size:clamp(40px,8vw,70px);font-weight:900;line-height:1}
+.band .p small{font-size:.45em;margin-right:8px}
+.band .l{font-size:22px;font-weight:800;line-height:1.5}
+.band .l span{display:block;font-size:18px;font-weight:700;opacity:.8}
+.contacts{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:16px}
+.ct{background:var(--panel);border:1.5px solid var(--line);border-radius:18px;padding:16px;display:flex;flex-direction:column;gap:2px;transition:.2s}
+.ct:hover{border-color:var(--acc)}
+.ct small{color:var(--muted);font-weight:600}
+.ct b{font-family:Arial,sans-serif;direction:ltr;text-align:right;font-size:20px;word-break:break-all}
+footer{padding:30px 0 40px;text-align:center;color:var(--muted);font-size:14px}
+.credit{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:10px;color:#cdd3df}
+.credit img{width:42px;height:42px;border-radius:10px}
+@media(max-width:900px){.grid4{grid-template-columns:1fr 1fr}.sim2,.ba{grid-template-columns:1fr}.contacts{grid-template-columns:1fr}}
+@media(max-width:560px){.grid4{grid-template-columns:1fr}.clients{grid-template-columns:1fr}.scene{height:300px}.wallsign{display:none}.door{height:190px}.dlight{bottom:256px}.person{width:54px;height:128px}.bubble{bottom:184px;font-size:12px}}
+@media(prefers-reduced-motion:reduce){.walking *{animation:none!important}}
+</style>
+</head>
+<body>
+<div class="glow"></div>
+<div class="wrap">
+  <nav>
+    <a class="brand" href="#"><img src="assets/nsm-logo.png" alt="NSM"><span>NSM <i>SALLE</i></span></a>
+    <a class="btn sm" href="#contact">تواصل معايا</a>
+  </nav>
+
+  <header class="hero">
+    <span class="pill">برنامج تسيير القاعات الرياضية</span>
+    <h1>ما بقى حتى واحد يتدرب <em>بلا ما يخلص</em></h1>
+    <p class="lead">نظّم قاعتك كلها فبرنامج واحد. كل منخرط يمرّر بطاقتو: <b>الخالص يدخل</b>، والمنتهي اشتراكو الباب <b>ما يتفتحلوش</b>. وانت تبع المنخرطين والمداخيل بلا وجع راس.</p>
+    <div class="cta"><a class="btn pri" href="#sim">شوف المحاكاة ↓</a><a class="btn" href="#shots">صور من البرنامج</a></div>
+  </header>
+
+  <section id="organize">
+    <h2>نظّم قاعتك</h2>
+    <p class="sub">كلش فبلاصة وحدة، والبرنامج يخدم عليك.</p>
+    <div class="grid4">
+      <div class="tile"><div class="ico">👥</div><h3>المنخرطين والاشتراكات</h3><p>التواريخ والحصص المتبقية، وتجديد الاشتراك بضغطة وحدة.</p></div>
+      <div class="tile"><div class="ico">🪪</div><h3>الدخول بالبطاقة</h3><p>الاشتراك منتهي ولا الحصص خلصو؟ الدخول يترفض وحدو.</p></div>
+      <div class="tile"><div class="ico">🛒</div><h3>الكايس والديون</h3><p>بيع المشروبات والمكمّلات، وسجّل الكريدي وتابع شكون باقي عليه.</p></div>
+      <div class="tile"><div class="ico">📊</div><h3>الإحصائيات</h3><p>الإيرادات، الحضور والتجديدات يوم بيوم، مع PDF.</p></div>
+    </div>
+    <div class="ba">
+      <div class="bad"><h3>قبل</h3><ul><li>دفتر وأوراق وكلش يدوي</li><li>منخرطين يدخلو وهوما ما جدّدوش</li><li>نقاش كل نهار على الدفع</li><li>ما تعرفش شكون باقي ما خلّصش</li></ul></div>
+      <div class="good"><h3>مع NSM SALLE</h3><ul><li>كل منخرط عندو بطاقة وملف واضح</li><li>ما يدخلش حتى يخلص ويجدّد</li><li>البرنامج هو اللي يقرر، مش انت</li><li>الديون والتجديدات مسجلين ومحسوبين</li></ul></div>
+    </div>
+  </section>
+
+  <section id="sim">
+    <h2>جرّب بنفسك</h2>
+    <p class="sub">اختار منخرط وشوف: يمشي لباب القاعة، يمرّر بطاقتو، ويدخل ولا ما يدخلش.</p>
+    <div class="card-box">
+      <div class="scene" id="scene">
+        <div class="counter">داخل القاعة: <b id="inside">0</b></div>
+        <div class="wallsign">GYM ENTRANCE</div>
+        <div class="floor"></div>
+        <div class="dlight" id="dlight">مغلق</div>
+        <div class="door" id="door"><div class="inside">🏋️</div><div class="p l"></div><div class="p r"></div></div>
+        <div class="post" id="post"><div class="waves"><i></i><i></i></div><div class="rdr"><span class="led" id="led"></span><b>RFID</b></div></div>
+        <div class="person" id="person">
+          <div class="nm" id="pname"></div>
+          <div class="bubble" id="bubble"></div>
+          <svg class="pv" viewBox="0 0 60 140" aria-hidden="true">
+            <g class="arm-b"><rect x="26" y="46" width="8" height="34" rx="4" fill="var(--skin)"/><rect x="24.5" y="44" width="11" height="14" rx="5" fill="var(--shirt)" opacity=".85"/></g>
+            <g class="leg-b"><rect x="25" y="82" width="11" height="46" rx="5" fill="#252b3a"/><rect x="22" y="124" width="19" height="9" rx="4" fill="#dfe6f5"/></g>
+            <g class="leg-f"><rect x="25" y="82" width="11" height="46" rx="5" fill="#2e3548"/><rect x="22" y="124" width="19" height="9" rx="4" fill="#fff"/></g>
+            <rect x="17" y="38" width="26" height="48" rx="11" fill="var(--shirt)"/>
+            <g class="head"><circle cx="30" cy="24" r="13" fill="var(--skin)"/><path d="M17 22c0-9 6-14 13-14s13 5 13 14c-3-5-8-7-13-7s-10 2-13 7z" fill="#1b1410"/></g>
+            <g class="arm-f"><rect x="26" y="46" width="8" height="34" rx="4" fill="var(--skin)"/><rect x="24.5" y="44" width="11" height="14" rx="5" fill="var(--shirt)"/><g class="card-in-hand"><rect x="23" y="78" width="14" height="22" rx="3" fill="#a9d4ff" stroke="#fff" stroke-width="1"/><rect x="26" y="82" width="6" height="5" rx="1" fill="#f4d98a"/></g></g>
+          </svg>
+        </div>
+      </div>
+      <div class="kbd" id="kbd"><span id="typed"></span><span class="caret"></span><small>اللي يبعثو القارئ للكمبيوتر</small></div>
+    </div>
+
+    <div class="sim2">
+      <div class="card-box who">
+        <h5>شكون جاي للقاعة؟</h5>
+        <div class="clients" id="clients"></div>
+        <div class="payrow" id="payrow"><span id="paytxt"></span><button class="btn pri sm" id="pay" type="button">💳 خلّص وجدّد الاشتراك</button></div>
+        <div class="tools"><button class="btn sm" id="sound" type="button" aria-pressed="true">🔊 الصوت</button><button class="btn sm" id="reset" type="button">↺ إعادة</button></div>
+      </div>
+      <div class="card-box">
+        <div class="win">
+          <div class="win-bar"><span></span><span></span><span></span><b>NSM SALLE</b></div>
+          <div class="win-body">
+            <h4>مراقبة الدخول</h4>
+            <p class="hint">مرر البطاقة أو أدخل المعرّف</p>
+            <div class="result" id="result" aria-live="polite"></div>
+            <div class="log"><h5>دخول اليوم</h5><div id="log"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p class="note">المنخرطين فالمحاكاة وهميين. القارئ USB يخدم كأنو كيبورد: يكتب رقم البطاقة ويبعث Enter، والبرنامج يقرر فالحين. البطاقة والتاغ (porte-clés) يخدمو بنفس الطريقة.</p>
+  </section>
+
+  <section id="shots">
+    <h2>صور من البرنامج</h2>
+    <p class="sub">كليكي على أي صورة باش تكبرها.</p>
+    <div class="gal" id="gal"></div>
+  </section>
+
+  <section id="contact">
+    <div class="band"><div class="l">السعر<span>قابل للتفاوض حسب النشاطات</span></div><div class="p">58.000<small>دج</small></div></div>
+    <div class="contacts">
+      <a class="ct" href="https://wa.me/213796086428" target="_blank" rel="noopener"><small>واتساب / هاتف</small><b>0796 08 64 28</b></a>
+      <a class="ct" href="https://www.instagram.com/nassim_kada1/" target="_blank" rel="noopener"><small>إنستغرام</small><b>@nassim_kada1</b></a>
+      <a class="ct" href="https://nassimkada.netlify.app/" target="_blank" rel="noopener"><small>الموقع</small><b>nassimkada.netlify.app</b></a>
+    </div>
+  </section>
+
+  <footer>
+    <div class="credit"><img src="assets/awab-gym-logo.png" alt="AWAB GYM"><span>صُمّم أصلا لقاعة <b>AWAB GYM</b></span></div>
+    <div>NSM SALLE · نسيم قادة · صنع في الجزائر</div>
+  </footer>
+</div>
+<dialog id="lb"><button class="btn sm x" type="button" id="lbx">✕ إغلاق</button><img id="lbi" alt=""></dialog>
+
+<script>
+(()=>{
+const $=s=>document.querySelector(s), sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const members=[
+ {uid:'0004521897',name:'Yacine Bensalem',c:'#3b82ff',skin:'#e0a77d',plan:'Mensuel',left:12,total:12,state:'اشتراك خالص'},
+ {uid:'0007391025',name:'Samira Khelifi',c:'#e5509f',skin:'#c98d65',plan:'Trimestriel',left:32,total:36,state:'اشتراك خالص'},
+ {uid:'0009917462',name:'Nesrine Taleb',c:'#8b93a7',skin:'#d9a07a',plan:'Annuel illimité',unl:true,expired:true,state:'اشتراك منتهي'},
+ {uid:'0003388120',name:'Karim Haddad',c:'#f08a2c',skin:'#b97b55',plan:'Mensuel',left:0,total:12,state:'الحصص خلصو'},
+ {uid:'0012045731',name:'Amine Boudiaf',c:'#8a5cf6',skin:'#e0a77d',plan:'Annuel illimité',unl:true,state:'اشتراك سنوي'},
+ {uid:'0005550001',name:null,label:'بطاقة مجهولة',c:'#5b6275',skin:'#d9a07a',state:'بطاقة مجهولة'}
+];
+const base=JSON.parse(JSON.stringify(members));
+const seedLog=[{n:'Walid Cherif',ok:true,t:'07:12'},{n:'Ines Belkacem',ok:true,t:'08:40'}];
+let entered,log,insideN,busy=false,sound=true,ac,last=-1;
+const person=$('#person'),door=$('#door'),dlight=$('#dlight'),post=$('#post'),led=$('#led'),typed=$('#typed'),res=$('#result'),bubble=$('#bubble'),scene=$('#scene');
+
+function beep(ok){ if(!sound)return; try{ac=ac||new (window.AudioContext||window.webkitAudioContext)();
+ const tone=(f,t0,d,ty='square')=>{const o=ac.createOscillator(),g=ac.createGain();o.type=ty;o.frequency.value=f;g.gain.value=.05;o.connect(g);g.connect(ac.destination);o.start(ac.currentTime+t0);o.stop(ac.currentTime+t0+d)};
+ if(ok){tone(1320,0,.1);tone(1760,.12,.14)}else{tone(180,0,.22,'sawtooth');tone(180,.3,.22,'sawtooth')}}catch(e){}}
+const hhmm=()=>{const d=new Date();return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')};
+function renderLog(){$('#log').innerHTML=log.slice(-4).reverse().map(l=>`<div class="row"><span class="nm">${l.n}</span><span class="tm">${l.t}</span><span class="${l.ok?'tag-ok':'tag-ko'}">${l.ok?'الدخول مسموح':'الدخول مرفوض'}</span></div>`).join('')}
+function idle(){res.className='result';res.innerHTML='<div class="ic">▣</div><div class="t">جاهز للمسح</div><div class="d">القارئ يخدم تلقائياً، بلا نقر ولا إدخال.</div>';typed.textContent='';led.className='led';dlight.className='dlight';dlight.textContent='مغلق'}
+function reset(){members.forEach((m,i)=>Object.assign(m,base[i]));entered=new Set();log=seedLog.slice();insideN=0;$('#inside').textContent=0;renderLog();idle();$('#payrow').classList.remove('show');door.classList.remove('open');person.style.opacity=0;person.style.left='-90px'}
+
+function evaluate(code){
+ const m=members.find(x=>x.uid===code);
+ if(!m||!m.name)return{ok:false,bub:'بطاقة مجهولة',name:'Unknown card',detail:'هذا الرقم ما كاينش فقاعدة المنخرطين.'};
+ if(m.expired)return{ok:false,pay:true,bub:'الاشتراك منتهي',name:m.name,detail:'الاشتراك منتهي · لازم يخلص ويجدّد.',m};
+ if(entered.has(m.uid))return{ok:false,bub:'دخل اليوم بالفعل',name:m.name,detail:'دخل المنخرط اليوم بالفعل · يسمح بدخول واحد فقط يوميا.',m};
+ if(!m.unl&&m.left<=0)return{ok:false,pay:true,bub:'الحصص خلصو',name:m.name,detail:'الحصص المتبقية انتهت · لازم يخلص ويجدّد.',m};
+ if(!m.unl)m.left--;entered.add(m.uid);
+ return{ok:true,bub:'مرحبا بيك ✓',name:m.name,detail:m.plan,m};
+}
+function show(r){
+ const m=r.m,sess=m?(m.unl?'<div class="s">الحصص: غير محدود</div>':`<div class="s">الحصص المتبقية · ${m.left} / ${m.total}</div>`):'';
+ res.className='result '+(r.ok?'ok':'ko')+' pop';
+ res.innerHTML=`<div class="ic">${r.ok?'✓':'✕'}</div><div class="t">${r.ok?'الدخول مسموح':'الدخول مرفوض'}</div><div class="n">${r.name}</div><div class="d">${r.detail}</div>${sess}`;
+ log.push({n:r.name,ok:r.ok,t:hhmm()});renderLog();
+}
+async function typeCode(code){
+ typed.textContent='';
+ for(const ch of code){typed.textContent+=ch;await sleep(40)}
+ typed.insertAdjacentHTML('beforeend','<span class="enter">⏎</span>');await sleep(220);
+}
+const say=(t,k)=>{bubble.textContent=t;bubble.className='bubble show '+k};
+const hush=()=>bubble.className='bubble';
+const standLeft=()=>`${scene.clientWidth*.55-72}px`;
+const doorLeft=()=>`${scene.clientWidth*.81}px`;
+
+async function play(i){
+ if(busy)return;busy=true;last=i;const m=members[i];
+ setBtns(true);$('#payrow').classList.remove('show');
+ person.style.setProperty('--shirt',m.c);person.style.setProperty('--skin',m.skin);$('#pname').textContent=m.name||m.label;
+ person.classList.remove('flip','scan','shake','walking');led.className='led';dlight.className='dlight';dlight.textContent='مغلق';typed.textContent='';
+ person.style.transition='none';person.style.left='-90px';person.style.opacity=1;void person.offsetWidth;
+ person.classList.add('walking');person.style.transition='left 2.2s linear, opacity .4s';person.style.left=standLeft();await sleep(2250);
+ person.classList.remove('walking');await sleep(200);
+ person.classList.add('scan');await sleep(450);
+ led.className='led scan';post.classList.add('scanning');say('🪪 ...','nt');
+ await typeCode(m.uid);
+ post.classList.remove('scanning');
+ const r=evaluate(m.uid);show(r);beep(r.ok);
+ led.className='led '+(r.ok?'ok':'ko');dlight.className='dlight '+(r.ok?'ok':'ko');dlight.textContent=r.ok?'مفتوح':'مرفوض';
+ if(r.ok){
+  say(r.bub,'ok');door.classList.add('open');await sleep(700);
+  person.classList.remove('scan');hush();person.classList.add('walking');person.style.transition='left 1.5s linear, opacity .4s';person.style.left=doorLeft();await sleep(1100);
+  person.style.opacity=0;await sleep(450);person.classList.remove('walking');
+  insideN++;$('#inside').textContent=insideN;await sleep(500);door.classList.remove('open');dlight.className='dlight';dlight.textContent='مغلق';
+ }else{
+  say(r.bub,'ko');person.classList.add('shake');await sleep(1100);person.classList.remove('shake');
+  if(r.pay){$('#paytxt').textContent=`${m.name}: ${r.bub}. ما يدخلش حتى يخلص.`;$('#payrow').classList.add('show')}
+  person.classList.remove('scan');hush();person.classList.add('flip','walking');person.style.transition='left 1.8s linear, opacity .5s';person.style.left='-90px';await sleep(1500);
+  person.style.opacity=0;await sleep(450);person.classList.remove('walking','flip');
+ }
+ led.className='led';busy=false;setBtns(false);
+}
+function setBtns(d){document.querySelectorAll('.cl').forEach(b=>b.disabled=d);$('#pay').disabled=d}
+const cl=$('#clients');
+members.forEach((m,i)=>{const b=document.createElement('button');b.type='button';b.className='cl';b.style.setProperty('--c',m.c);
+ b.innerHTML=`<span class="av">🙂</span><span class="t"><b>${m.name||m.label}</b><span>${m.state}</span></span>`;b.onclick=()=>play(i);cl.appendChild(b)});
+$('#pay').onclick=()=>{if(busy||last<0)return;const m=members[last];m.expired=false;if(!m.unl){m.left=m.total}
+ $('#payrow').classList.remove('show');res.className='result ok pop';res.innerHTML=`<div class="ic">💳</div><div class="t">تم الدفع</div><div class="n">${m.name}</div><div class="d">تم تجديد الاشتراك. يقدر يمرّر بطاقتو من جديد.</div>`;beep(true);setTimeout(()=>play(last),1200)};
+$('#sound').onclick=e=>{sound=!sound;e.currentTarget.setAttribute('aria-pressed',sound);e.currentTarget.textContent=sound?'🔊 الصوت':'🔇 الصوت'};
+$('#reset').onclick=()=>{if(!busy)reset()};
+reset();
+
+const shots=[['01-login','تسجيل الدخول'],['02-accueil','الصفحة الرئيسية'],['03-controle-acces','مراقبة الدخول بالبطاقة'],['04-adherents','المنخرطين والاشتراكات'],['05-caisse','الكايس والمبيعات'],['06-produits','المنتجات'],['07-credits','ديون المنخرطين'],['08-statistiques','الإحصائيات'],['09-version-francaise','النسخة الفرنسية']];
+const lb=$('#lb'),lbi=$('#lbi');
+$('#gal').innerHTML=shots.map(([f,t])=>`<figure data-f="${f}" data-t="${t}"><img src="assets/shots/${f}.png" alt="${t}" loading="lazy"><figcaption>${t}</figcaption></figure>`).join('');
+document.querySelectorAll('#gal figure').forEach(fg=>fg.onclick=()=>{lbi.src=`assets/shots/${fg.dataset.f}.png`;lbi.alt=fg.dataset.t;lb.showModal()});
+$('#lbx').onclick=()=>lb.close();lb.addEventListener('click',e=>{if(e.target===lb)lb.close()});
+})();
+</script>
+</body>
+</html>
